@@ -1,5 +1,5 @@
 import { cn, sleep } from "@/lib/utils";
-import { forwardRef, useImperativeHandle, useState } from "react";
+import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react";
 import maps from "@/data/maps";
 import { toast, Toaster } from "sonner";
 export interface GridItem {
@@ -43,6 +43,12 @@ export const tileTypes: Record<string, GridItem> = {
         name: "Bedrock",
         imagePath: "/img/B.png",
         destructible: false,
+        passable: false
+    },
+    S: {
+        name: "Stone",
+        imagePath: "/img/S.png",
+        destructible: true,
         passable: false
     },
     "W": {
@@ -102,22 +108,44 @@ const Map = forwardRef<MapRef, MapProps>(({ stop = 0, running = false }, ref) =>
     const initialState = currentMap.map;
     const [playerPosition, setPlayerPosition] = useState(currentMap.start);
     const [gameState, setGameState] = useState<GridItem[][]>(parseMap(initialState));
-    
-    async function afterMove() {
+
+    const gameStateRef = useRef(gameState);
+    const currentMapRef = useRef(currentMap);
+    const initialStateRef = useRef(initialState);
+    const stopRef = useRef(stop);
+
+    useEffect(() => {
+        gameStateRef.current = gameState;
+    }, [gameState]);
+
+    useEffect(() => {
+        currentMapRef.current = currentMap;
+    }, [currentMap]);
+
+    useEffect(() => {
+        initialStateRef.current = initialState;
+    }, [initialState]);
+
+    useEffect(() => {
+        stopRef.current = stop;
+    }, [stop]);
+
+    const afterMove = async () => {
         await sleep(50);
 
         setPlayerPosition((pos) => {
-            const goal = currentMap.goal;
+            const goal = currentMapRef.current.goal;
             if (pos.x === goal.x && pos.y === goal.y) {
-                toast.success("🎉 Congratulations!", { description: 'You reached the goal! Now click the "Next" button in the top right corner to move on to the next stop!' });
+                toast.success("🎉 Congratulations!", {
+                    description:
+                        'You reached the goal! Now click the "Next" button in the top right corner to move on to the next stop!',
+                });
                 return pos;
             }
 
             let newY = pos.y;
             while (true) {
-                const belowTile = gameState[newY + 1]?.[pos.x];
-                console.log("below", belowTile, "pos:", pos.x, newY + 1);
-
+                const belowTile = gameStateRef.current[newY + 1]?.[pos.x];
                 if (belowTile && belowTile.passable) {
                     newY += 1;
                 } else {
@@ -125,31 +153,25 @@ const Map = forwardRef<MapRef, MapProps>(({ stop = 0, running = false }, ref) =>
                 }
             }
 
-
             if (newY !== pos.y) {
                 return { ...pos, y: newY };
             }
 
             return pos;
         });
-
-
-    }
-
-
-
+    };
 
     useImperativeHandle(ref, () => ({
         async moveLeft() {
             setPlayerPosition((pos) => {
-                if (!gameState[pos.y]?.[pos.x - 1]?.passable) return pos;
+                if (!gameStateRef.current[pos.y]?.[pos.x - 1]?.passable) return pos;
                 return { ...pos, x: pos.x - 1 };
             });
             await afterMove();
         },
         async moveRight() {
             setPlayerPosition((pos) => {
-                if (!gameState[pos.y]?.[pos.x + 1]?.passable) return pos;
+                if (!gameStateRef.current[pos.y]?.[pos.x + 1]?.passable) return pos;
                 return { ...pos, x: pos.x + 1 };
             });
             await afterMove();
@@ -158,10 +180,14 @@ const Map = forwardRef<MapRef, MapProps>(({ stop = 0, running = false }, ref) =>
             setPlayerPosition((pos) => ({ ...pos, y: pos.y - 1 }));
         },
         async reset() {
-            setPlayerPosition(currentMap.start);
-            setGameState(parseMap(initialState));
-        }
-    }), [gameState, currentMap, initialState]);
+            console.log("stop", stopRef.current);
+            setPlayerPosition(currentMapRef.current.start);
+            setGameState(parseMap(initialStateRef.current));
+        },
+    }));
+
+
+
 
     return (
         <div className="relative">

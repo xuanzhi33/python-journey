@@ -1,10 +1,7 @@
-import text0 from "../data/0.md?raw"
-import text1 from "../data/1.md?raw"
+import maps from "@/data/maps"
+
 import { parse } from "marked"
-export const textList = [
-    text0,
-    text1
-]
+export const textList = maps.map((item) => item.info);
 export default function Info({ stop = 0 }) {
     return (
         <div className="prose max-w-none">
