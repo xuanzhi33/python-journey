@@ -18,6 +18,7 @@ export default function App() {
   const [status, setStatus] = useState("loading");
   const [progress, setProgress] = useState(0);
   const editorRef = useRef<Parameters<NonNullable<ComponentProps<typeof Editor>['onMount']>>[0] | null>(null);
+  const highlightCollectionRef = useRef<any>(null);
   const onMount: ComponentProps<typeof Editor>['onMount'] = (editor, monaco) => {
     console.log('editor mounted', editor);
     editorRef.current = editor;
@@ -80,10 +81,16 @@ export default function App() {
       }
     });
 
+    highlightCollectionRef.current = editor.createDecorationsCollection([]);
+
   }
   const outputScrollToBottomRef = useRef<() => void | null>(null);
   const pythonRef = useRef<ReturnType<typeof initPython> extends Promise<infer R> ? R : null>(null);
   const monacoApi = useMonaco();
+  const monacoRef = useRef(monacoApi);
+  useEffect(() => {
+    monacoRef.current = monacoApi;
+  }, [monacoApi]);
   const mapRef = useRef<MapRef | null>(null);
 
   const appendOutput = (text: string) => {
@@ -94,6 +101,35 @@ export default function App() {
       }, 100);
       return newOutput;
     });
+  }
+
+  const highlightRef = useRef<string[]>([]);
+
+  function highlightLine(lineNumber: number) {
+    const editor = editorRef.current;
+    const monaco = monacoRef.current;
+    const collection = highlightCollectionRef.current;
+
+    if (!editor || !monaco || !collection) return;
+
+
+
+    if (lineNumber === -1) {
+      collection.set([]);
+      return;
+    }
+    collection.set([
+      {
+        range: new monaco.Range(lineNumber, 1, lineNumber, 1),
+        options: {
+          isWholeLine: true,
+          className: "myLineHighlight",
+        },
+      },
+    ]);
+
+  
+    editor.revealLine(lineNumber);
   }
 
   const runPythonCode = async () => {
@@ -143,9 +179,12 @@ export default function App() {
 
   }
 
+
+  const editorDebounceRef = useRef<any>(null);
+
   useEffect(() => {
     async function initialize() {
-      pythonRef.current = await initPython(appendOutput, mapRef.current!);
+      pythonRef.current = await initPython(appendOutput, highlightLine, mapRef.current!);
       setStatus("idle");
     }
     initialize();
@@ -240,7 +279,13 @@ export default function App() {
               onChange={async (newValue) => {
                 const code = newValue || "";
                 setValue(code);
-                await realtimeSyntaxCheck(code);
+
+                clearTimeout(editorDebounceRef.current);
+                editorDebounceRef.current = setTimeout(async () => {
+                  await realtimeSyntaxCheck(code);
+                  highlightLine(-1);
+                }, 300);
+
               }}
             />
             <Editor

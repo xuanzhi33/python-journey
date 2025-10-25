@@ -127,5 +127,53 @@ export default [
     kind: "Function",
     detail: "Make character jump",
     documentation: "Makes the character jump upward.\n\nExample:\n```python\njump()\n```"
+  },
+  {
+    "label": "mine_up",
+    "kind": "Function",
+    "detail": "Mine block above",
+    "documentation": "Mines (removes) the block directly above the character.\n\nExample:\n```python\nmine_up()\n```"
+  },
+  {
+    "label": "mine_down",
+    "kind": "Function",
+    "detail": "Mine block below",
+    "documentation": "Mines (removes) the block directly below the character.\n\nExample:\n```python\nmine_down()\n```"
+  },
+  {
+    "label": "mine_left",
+    "kind": "Function",
+    "detail": "Mine block to the left",
+    "documentation": "Mines (removes) the block directly to the left of the character.\n\nExample:\n```python\nmine_left()\n```"
+  },
+  {
+    "label": "mine_right",
+    "kind": "Function",
+    "detail": "Mine block to the right",
+    "documentation": "Mines (removes) the block directly to the right of the character.\n\nExample:\n```python\nmine_right()\n```"
+  },
+  {
+    "label": "check_up",
+    "kind": "Function",
+    "detail": "Check block above",
+    "documentation": "Returns the name of the block directly above the character as a string.\n\nExample:\n```python\nblock = check_up()\nprint(block)  # e.g. 'grass'\n```"
+  },
+  {
+    "label": "check_down",
+    "kind": "Function",
+    "detail": "Check block below",
+    "documentation": "Returns the name of the block directly below the character as a string.\n\nExample:\n```python\nblock = check_down()\nprint(block)  # e.g. 'dirt'\n```"
+  },
+  {
+    "label": "check_left",
+    "kind": "Function",
+    "detail": "Check block to the left",
+    "documentation": "Returns the name of the block directly to the left of the character as a string.\n\nExample:\n```python\nblock = check_left()\nprint(block)  # e.g. 'stone'\n```"
+  },
+  {
+    "label": "check_right",
+    "kind": "Function",
+    "detail": "Check block to the right",
+    "documentation": "Returns the name of the block directly to the right of the character as a string.\n\nExample:\n```python\nblock = check_right()\nprint(block)  # e.g. 'flower'\n```"
   }
 ];

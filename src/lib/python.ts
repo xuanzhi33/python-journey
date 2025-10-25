@@ -31,13 +31,16 @@ export interface PyProxy {
 }
 
 
-export const initPython = async (appendOutput: (text: string) => void, mapRef: MapRef) => {
+export const initPython = async (appendOutput: (text: string) => void, highlightLine: (lineNumber: number) => void, mapRef: MapRef) => {
     let pyodide = await window.loadPyodide();
     let context: PyProxy = pyodide.globals;
     function clearContext() {
         context = pyodide.toPy({
             print: (...args: any[]) => {
                 appendOutput(args.map(String).join(" "));
+            },
+            __highlight_line: (line: number) => {
+                highlightLine(line);
             },
             input: (msg: string) => {
                 return prompt(msg);
@@ -50,21 +53,61 @@ export const initPython = async (appendOutput: (text: string) => void, mapRef: M
             },
             __jump: async () => {
                 await mapRef.jump();
-            }
+            },
+            __mine: async (direction: "up" | "down" | "left" | "right") => {
+                await mapRef.mine(direction);
+            },
+            __check: async (direction: "up" | "down" | "left" | "right") => {
+                return await mapRef.check(direction);
+            },
         });
             const predefinedFunctions = `
 from time import sleep as __sleep
+import traceback
+
+def __hl():
+    stack = traceback.extract_stack()
+    filename, lineno, funcname, code = stack[-3]
+    __highlight_line(lineno)
+
 def move_left():
+    __hl()
     __move_left()
     __sleep(0.5)
 
 def move_right():
+    __hl()
     __move_right()
     __sleep(0.5)
 
 def jump():
+    __hl()
     __jump()
     __sleep(0.5)
+def mine_left():
+    __hl()
+    __mine("left")
+    __sleep(0.5)
+def mine_right():
+    __hl()
+    __mine("right")
+    __sleep(0.5)
+def mine_up():
+    __hl()
+    __mine("up")
+    __sleep(0.5)
+def mine_down():
+    __hl()
+    __mine("down")
+    __sleep(0.5)
+def check_left():
+    return __check("left")
+def check_right():
+    return __check("right")
+def check_up():
+    return __check("up")
+def check_down():
+    return __check("down")
 `;
         pyodide.runPython(predefinedFunctions, { globals: context });
     }

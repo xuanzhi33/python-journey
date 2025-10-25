@@ -169,3 +169,8 @@ pre {
   @apply bg-muted p-4 rounded-md overflow-x-auto;
   font-family: 'Courier New', Courier, monospace
 }
+
+
+.myLineHighlight {
+  background-color: rgba(0, 255, 0, 0.25);
+}

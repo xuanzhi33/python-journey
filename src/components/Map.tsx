@@ -94,6 +94,8 @@ export interface MapRef {
     moveRight: () => Promise<void>;
     jump: () => Promise<void>;
     reset: () => Promise<void>;
+    mine: (direction: "up" | "down" | "left" | "right") => Promise<void>;
+    check: (direction: "up" | "down" | "left" | "right") => Promise<string>;
 }
 
 interface MapProps {
@@ -113,6 +115,7 @@ const Map = forwardRef<MapRef, MapProps>(({ stop = 0, running = false }, ref) =>
     const currentMapRef = useRef(currentMap);
     const initialStateRef = useRef(initialState);
     const stopRef = useRef(stop);
+    const playerPositionRef = useRef(playerPosition);
 
     useEffect(() => {
         gameStateRef.current = gameState;
@@ -125,6 +128,10 @@ const Map = forwardRef<MapRef, MapProps>(({ stop = 0, running = false }, ref) =>
     useEffect(() => {
         initialStateRef.current = initialState;
     }, [initialState]);
+
+    useEffect(() => {
+        playerPositionRef.current = playerPosition;
+    }, [playerPosition]);
 
     useEffect(() => {
         stopRef.current = stop;
@@ -184,6 +191,37 @@ const Map = forwardRef<MapRef, MapProps>(({ stop = 0, running = false }, ref) =>
             setPlayerPosition(currentMapRef.current.start);
             setGameState(parseMap(initialStateRef.current));
         },
+        async mine(direction: "up" | "down" | "left" | "right") {
+            setGameState((state) => {
+                const newState = state.map((row) => row.slice());
+                const pos = playerPositionRef.current;
+                let targetX = pos.x;
+                let targetY = pos.y;
+                if (direction === "up") targetY -= 1;
+                else if (direction === "down") targetY += 1;
+                else if (direction === "left") targetX -= 1;
+                else if (direction === "right") targetX += 1;
+                
+                const targetTile = newState[targetY]?.[targetX];
+                if (targetTile && targetTile.destructible) {
+                    newState[targetY][targetX] = tileTypes["_"];
+                }
+                return newState;
+            });
+            await afterMove();
+        },
+        async check(direction: "up" | "down" | "left" | "right") {
+            const pos = playerPositionRef.current;
+            let targetX = pos.x;
+            let targetY = pos.y;
+            if (direction === "up") targetY -= 1;
+            else if (direction === "down") targetY += 1;
+            else if (direction === "left") targetX -= 1;
+            else if (direction === "right") targetX += 1;
+
+            const targetTile = gameStateRef.current[targetY]?.[targetX];
+            return targetTile ? targetTile.name || "Unknown" : "Out of bounds";
+        }
     }));
 
 
