@@ -4,6 +4,7 @@ import text1 from "../data/1.md?raw"
 import text2 from "../data/2.md?raw"
 import text3 from "../data/3.md?raw"
 import text4 from "../data/4.md?raw"
+import text5 from "../data/5.md?raw"
 export default [
     {
         map: `
@@ -109,4 +110,27 @@ BBBBBBBBBBBBBBBBBBBB
         },
         info: text4
     },
+
+    {
+
+        map: `
+____________________
+____________________
+____________________
+____________________
+____________________
+____________________
+____________________
+_S__S_____SS_______F
+DDDDDDDDDDDDDDDDDDDD
+BBBBBBBBBBBBBBBBBBBB
+`,
+        start: { x: 0, y: 7 },
+        goal(pos: { x: number; y: number }, _2: GridItem[][]) {
+            return pos.x === 19 && pos.y === 7;
+        },
+        info: text5
+    },
+
+
 ]
