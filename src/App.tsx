@@ -103,7 +103,6 @@ export default function App() {
     });
   }
 
-  const highlightRef = useRef<string[]>([]);
 
   function highlightLine(lineNumber: number) {
     const editor = editorRef.current;

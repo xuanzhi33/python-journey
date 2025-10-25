@@ -19,7 +19,7 @@ BBBBBBBBBBBBBBBBBBBB
 `,
         start: { x: 8, y: 5 },
         // goal: { x: 10, y: 4 },
-        goal(pos: { x: number; y: number }, gameState: GridItem[][]) {
+        goal(pos: { x: number; y: number }, _: GridItem[][]) {
             return pos.x === 10 && pos.y === 4;
         },
         info: text0
