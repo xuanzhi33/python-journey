@@ -39,6 +39,12 @@ export const tileTypes: Record<string, GridItem> = {
         destructible: true,
         passable: false
     },
+    L: {
+        name: "Leaves",
+        imagePath: "/img/L.png",
+        destructible: true,
+        passable: true
+    },
     B: {
         name: "Bedrock",
         imagePath: "/img/B.png",
@@ -51,11 +57,23 @@ export const tileTypes: Record<string, GridItem> = {
         destructible: true,
         passable: false
     },
-    "W": {
-        name: "Water",
-        imagePath: "/img/W.png",
-        destructible: false,
-        passable: false
+    d: {
+        name: "Diamond Ore",
+        imagePath: "/img/DO.png",
+        destructible: true,
+        passable: false,
+    },
+    g: {
+        name: "Gold Ore",
+        imagePath: "/img/GO.png",
+        destructible: true,
+        passable: false,
+    },
+    c: {
+        name: "Coal Ore",
+        imagePath: "/img/CO.png",
+        destructible: true,
+        passable: false,
     },
     "_": {
         name: "Air",
@@ -95,7 +113,7 @@ export interface MapRef {
     jump: () => Promise<void>;
     reset: () => Promise<void>;
     mine: (direction: "up" | "down" | "left" | "right") => Promise<void>;
-    check: (direction: "up" | "down" | "left" | "right") => Promise<string>;
+    check: (direction: "up" | "down" | "left" | "right") => string;
 }
 
 interface MapProps {
@@ -210,7 +228,7 @@ const Map = forwardRef<MapRef, MapProps>(({ stop = 0, running = false }, ref) =>
             });
             await afterMove();
         },
-        async check(direction: "up" | "down" | "left" | "right") {
+        check(direction: "up" | "down" | "left" | "right") {
             const pos = playerPositionRef.current;
             let targetX = pos.x;
             let targetY = pos.y;

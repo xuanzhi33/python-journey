@@ -91,18 +91,18 @@ BBBBBBBBBBBBBBBBBBBB
     {
 
         map: `
-____________________
-___________________F
-________________SSSS
-_____________SSSS___
-__________SSSS______
-_______SSSS_________
-____SSSS____________
-_SSSS_______________
-DDDDDDDDDDDDDDDDDDDD
+________LLL_________
+_______LLLLL________
+_______LLOLL________
+_________O__________
+_________O__________
+SSSSSSSSg_cSSSSSSSSS
+SSSSSSSSSdSSSSSSSSSS
+SSSSSSSSSSSSSSSSSSSS
+SSSSSSSSSSSSSSSSSSSS
 BBBBBBBBBBBBBBBBBBBB
 `,
-        start: { x: 0, y: 7 },
+        start: { x: 9, y: 5 },
         // goal: { x: 19, y: 1 },
         goal(_1: { x: number; y: number }, _2: GridItem[][]) {
             return false;

@@ -57,8 +57,8 @@ export const initPython = async (appendOutput: (text: string) => void, highlight
             __mine: async (direction: "up" | "down" | "left" | "right") => {
                 await mapRef.mine(direction);
             },
-            __check: async (direction: "up" | "down" | "left" | "right") => {
-                return await mapRef.check(direction);
+            __check: (direction: "up" | "down" | "left" | "right") => {
+                return mapRef.check(direction);
             },
         });
             const predefinedFunctions = `
