@@ -272,7 +272,6 @@ export default function App() {
               loading={
                 <Spinner className='text-white size-8' />
               }
-              theme='vs-dark'
               value={value}
               onMount={onMount}
               onChange={async (newValue) => {
@@ -296,7 +295,6 @@ export default function App() {
                 }
               }
               height="200px"
-              theme='vs-dark'
               loading={
                 <Spinner className='text-white size-8' />
               }
