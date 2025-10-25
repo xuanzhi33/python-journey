@@ -137,7 +137,11 @@ export default function App() {
       try {
         setStatus("running");
 
+        appendOutput("\n--- Program Started ---\n");
+
         await pythonRef.current.run(value);
+
+        appendOutput("\n--- Program finished ---");
 
         setStatus("idle");
       } catch (error) {
@@ -197,6 +201,9 @@ export default function App() {
 
             <div className='text-2xl'>
               A Python Journey
+              <span className='text-sm text-gray-500 ml-2'>
+                by xuanzhi33
+              </span>
             </div>
             <div className='flex items-center'>
 
