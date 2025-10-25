@@ -5,6 +5,7 @@ import text2 from "../data/2.md?raw"
 import text3 from "../data/3.md?raw"
 import text4 from "../data/4.md?raw"
 import text5 from "../data/5.md?raw"
+import text6 from "../data/6.md?raw"
 export default [
     {
         map: `
@@ -148,9 +149,10 @@ BBBBBBBBBBBBBBBBBBBB
 `,
         start: { x: 0, y: 7 },
         goal(pos: { x: number; y: number }, _2: GridItem[][]) {
-            return pos.x === 19 && pos.y === 7;
+            // Update goal logic to reflect the while loop concept from 6.md
+            return pos.x === 19 && pos.y === 7; // Steve reaches the flower
         },
-        info: text5
+        info: text6
     },
 
 ]
