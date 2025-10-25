@@ -6,6 +6,7 @@ import text3 from "../data/3.md?raw"
 import text4 from "../data/4.md?raw"
 import text5 from "../data/5.md?raw"
 import text6 from "../data/6.md?raw"
+import text7 from "../data/7.md?raw"
 export default [
     {
         map: `
@@ -153,6 +154,28 @@ BBBBBBBBBBBBBBBBBBBB
             return pos.x === 19 && pos.y === 7; // Steve reaches the flower
         },
         info: text6
+    },
+
+    {
+
+        map: `
+____________________
+GGGGGGGGG_GGGGGGGGGG
+DDDDDDDDD_DDDDDDDDDD
+DDDDDDDDDDDDDDDDDDDD
+SSSSSSSScScSSSSSSSSS
+SSSSSSSSiSSSSSSSSSSS
+SSSSSSSSSSSSSSSSSSSS
+SSSSSSSSgSSSSSSSSSSS
+SSSSSSSSSSdSSSSSSSSS
+BBBBBBBBBBBBBBBBBBBB
+`,
+        start: { x: 9, y: 2 },
+        goal(pos: { x: number; y: number }, _2: GridItem[][]) {
+            // Update goal logic to reflect the while loop concept from 6.md
+            return pos.x === 19 && pos.y === 7; // Steve reaches the flower
+        },
+        info: text7
     },
 
 ]

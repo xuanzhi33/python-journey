@@ -75,6 +75,12 @@ export const tileTypes: Record<string, GridItem> = {
         destructible: true,
         passable: false,
     },
+    i: {
+        name: "Iron Ore",
+        imagePath: "/img/IO.png",
+        destructible: true,
+        passable: false,
+    },
     "_": {
         name: "Air",
         imagePath: "/img/A.png",
