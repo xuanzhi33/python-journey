@@ -7,14 +7,14 @@ ____________________
 ____________________
 ____________________
 ____________________
-____________________
-________________F___
+__________F_________
+__________D_________
 GGGGGGGGGGGGGGGGGGGG
 DDDDDDDDDDDDDDDDDDDD
 DDDDDDDDDDDDDDDDDDDD
 BBBBBBBBBBBBBBBBBBBB
 `,
-        start: { x: 10, y: 7 },
-        goal: { x: 17, y: 7 }
+        start: { x: 8, y: 7 },
+        goal: { x: 10, y: 6 }
     }
 ]

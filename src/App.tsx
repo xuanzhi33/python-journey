@@ -2,7 +2,7 @@ import { useEffect, useRef, useState, type ComponentProps } from 'react';
 import pythonKeywords from './assets/pythonKeywords';
 import Editor, { useMonaco } from '@monaco-editor/react';
 import { Button } from './components/ui/button';
-import { ArrowLeft, ArrowRight, Play, TriangleAlert } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Play, RefreshCw, TriangleAlert } from 'lucide-react';
 import { initPython } from './lib/python';
 import { Spinner } from './components/ui/spinner';
 import { toast, Toaster } from 'sonner';
@@ -153,8 +153,8 @@ export default function App() {
 
   return (
     <>
-      <div className='h-dvh flex'>
-        <div className='w-1/2 flex flex-col'>
+      <div className='h-dvh flex flex-col'>
+        <div className='h-[50px]'>
           <div className='flex px-4 py-2 justify-between items-center'>
 
             <div className='text-2xl'>
@@ -171,90 +171,105 @@ export default function App() {
               <div>
                 Stop {progress}
               </div>
-              <Button className='ml-2' disabled={progress >= 10} onClick={() => {
+              <Button className='ml-2' variant="secondary" disabled={progress >= 10} onClick={() => {
                 setProgress((prev) => Math.min(10, prev + 1));
               }}>
                 Next
                 <ArrowRight />
               </Button>
+
+              <Button className='ml-5' variant="outline" disabled={status === "running" || status === "loading"} onClick={async () => {
+                await mapRef.current?.reset();
+              }}>
+                <RefreshCw />
+                Reset
+              </Button>
+              <div className='w-28 ml-5 flex items-center justify-between'>
+                <Button className='text-green-500 flex-1'
+                  disabled={status === "running" || status === "loading"}
+                  onClick={async () => {
+                    await mapRef.current?.reset();
+                    await sleep(500);
+                    await runPythonCode();
+                  }}>
+                  <Play />
+                  Run
+                </Button>
+                <div className='ml-2'>
+                  {
+                    status === "error" ? (
+                      <TriangleAlert className='text-yellow-500' />
+                    ) : status !== "idle" ? (
+                      <Spinner className='text-green-500' />
+                    ) : null
+                  }
+
+                </div>
+
+              </div>
             </div>
-          </div>
-          <div className='flex-1 overflow-y-scroll p-3'>
-            <Info stop={progress} />
-          </div>
-          <div className='flex-1 flex justify-center items-center'>
-            <Map stop={progress} ref={mapRef} running={status === "running"} />
           </div>
         </div>
-        <div
-          className='h-full w-1/2 bg-[#1e1e1e] flex flex-col'
-        >
-          <div className='px-4 py-2 flex items-center'>
-            <Button size="sm" className='text-green-500'
-              disabled={status === "running" || status === "loading"}
-              onClick={async () => {
-                await mapRef.current?.reset();
-                await sleep(500);
-                await runPythonCode();
-              }}>
-              <Play />
-              Run
-            </Button>
-            <div className='ml-2'>
-              {
-                status === "error" ? (
-                  <TriangleAlert className='text-yellow-500' />
-                ) : status !== "idle" ? (
-                  <Spinner className='text-white' />
-                ) : null
-              }
+        <div className='flex h-[calc(100vh-50px)]'>
+          <div className='w-1/2 flex flex-col'>
 
+            <div className='flex-1 overflow-y-scroll p-3'>
+              <Info stop={progress} />
+            </div>
+            <div className='flex-1 flex justify-center items-center'>
+              <Map stop={progress} ref={mapRef} running={status === "running"} />
             </div>
           </div>
-          <Editor
-            defaultLanguage="python"
-            loading={
-              <Spinner className='text-white size-8' />
-            }
-            theme='vs-dark'
-            value={value}
-            onMount={onMount}
-            onChange={async (newValue) => {
-              const code = newValue || "";
-              setValue(code);
-              await realtimeSyntaxCheck(code);
-            }}
-          />
-          <Editor
-            options={
-              {
-                readOnly: true,
-                lineNumbers: "off",
-                minimap: { enabled: false }
+          <div
+            className='h-full w-1/2 bg-[#1e1e1e] flex flex-col'
+          >
+
+            <Editor
+              defaultLanguage="python"
+              loading={
+                <Spinner className='text-white size-8' />
               }
-            }
-            height="200px"
-            theme='vs-dark'
-            loading={
-              <Spinner className='text-white size-8' />
-            }
-            onMount={(editor) => {
-              outputScrollToBottomRef.current = () => {
-                const model = editor.getModel();
-                if (model) {
-                  const lastLine = model.getLineCount();
-                  editor.revealLine(lastLine);
+              theme='vs-dark'
+              value={value}
+              onMount={onMount}
+              onChange={async (newValue) => {
+                const code = newValue || "";
+                setValue(code);
+                await realtimeSyntaxCheck(code);
+              }}
+            />
+            <Editor
+              options={
+                {
+                  readOnly: true,
+                  lineNumbers: "off",
+                  minimap: { enabled: false }
                 }
               }
-            }}
-            value={output}
-          />
+              height="200px"
+              theme='vs-dark'
+              loading={
+                <Spinner className='text-white size-8' />
+              }
+              onMount={(editor) => {
+                outputScrollToBottomRef.current = () => {
+                  const model = editor.getModel();
+                  if (model) {
+                    const lastLine = model.getLineCount();
+                    editor.revealLine(lastLine);
+                  }
+                }
+              }}
+              value={output}
+            />
 
+          </div>
+
+
+          <Toaster />
         </div>
-
-
-        <Toaster />
       </div>
+
     </>
   );
 }

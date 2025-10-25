@@ -121,7 +121,7 @@
 
 
 body {
-  font-family: serif;
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
 }
 
 
@@ -133,7 +133,7 @@ body {
   image-rendering: pixelated; /* 像素化渲染 */
   transform-origin: top left;
   transform: scale(1.4);
-  transition: top 0.5s, left 0.5s;
+  transition: top 0.2s, left 0.2s;
 }
 
 .steve.playing {
@@ -151,4 +151,21 @@ body {
     background-position: -120px -96px; 
     
   }
+}
+
+h1 {
+  @apply text-2xl font-bold mb-4;
+}
+
+h2 {
+  @apply text-xl font-semibold mb-2;
+}
+
+hr {
+  @apply border-t border-muted my-4;
+}
+
+pre {
+  @apply bg-muted p-4 rounded-md overflow-x-auto;
+  font-family: 'Courier New', Courier, monospace
 }

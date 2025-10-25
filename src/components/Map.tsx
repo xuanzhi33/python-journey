@@ -1,6 +1,7 @@
 import { cn, sleep } from "@/lib/utils";
 import { forwardRef, useImperativeHandle, useState } from "react";
 import maps from "@/data/maps";
+import { toast, Toaster } from "sonner";
 export interface GridItem {
     name?: string;
     imagePath?: string;
@@ -30,7 +31,7 @@ export const tileTypes: Record<string, GridItem> = {
         name: "Dirt",
         imagePath: "/img/D.png",
         destructible: true,
-        passable: true
+        passable: false
     },
     O: {
         name: "Oak Log",
@@ -101,13 +102,57 @@ const Map = forwardRef<MapRef, MapProps>(({ stop = 0, running = false }, ref) =>
     const initialState = currentMap.map;
     const [playerPosition, setPlayerPosition] = useState(currentMap.start);
     const [gameState, setGameState] = useState<GridItem[][]>(parseMap(initialState));
+    
+    async function afterMove() {
+        await sleep(50);
+
+        setPlayerPosition((pos) => {
+            const goal = currentMap.goal;
+            if (pos.x === goal.x && pos.y === goal.y) {
+                toast.success("🎉 Congratulations!", { description: 'You reached the goal! Now click the "Next" button in the top right corner to move on to the next stop!' });
+                return pos;
+            }
+
+            let newY = pos.y;
+            while (true) {
+                const belowTile = gameState[newY + 1]?.[pos.x];
+                console.log("below", belowTile, "pos:", pos.x, newY + 1);
+
+                if (belowTile && belowTile.passable) {
+                    newY += 1;
+                } else {
+                    break;
+                }
+            }
+
+
+            if (newY !== pos.y) {
+                return { ...pos, y: newY };
+            }
+
+            return pos;
+        });
+
+
+    }
+
+
+
 
     useImperativeHandle(ref, () => ({
         async moveLeft() {
-            setPlayerPosition((pos) => ({ ...pos, x: pos.x - 1 }));
+            setPlayerPosition((pos) => {
+                if (!gameState[pos.y][pos.x - 1].passable) return pos;
+                return { ...pos, x: pos.x - 1 };
+            });
+            await afterMove();
         },
         async moveRight() {
-            setPlayerPosition((pos) => ({ ...pos, x: pos.x + 1 }));
+            setPlayerPosition((pos) => {
+                if (!gameState[pos.y][pos.x + 1].passable) return pos;
+                return { ...pos, x: pos.x + 1 };
+            });
+            await afterMove();
         },
         async jump() {
             setPlayerPosition((pos) => ({ ...pos, y: pos.y - 1 }));
@@ -116,7 +161,7 @@ const Map = forwardRef<MapRef, MapProps>(({ stop = 0, running = false }, ref) =>
             setPlayerPosition(currentMap.start);
             setGameState(parseMap(initialState));
         }
-    }));
+    }), [gameState, currentMap, initialState]);
 
     return (
         <div className="relative">
@@ -138,6 +183,7 @@ const Map = forwardRef<MapRef, MapProps>(({ stop = 0, running = false }, ref) =>
                 </div>
             ))}
             <Player state={running ? "playing" : "idle"} position={playerPosition} />
+            <Toaster />
         </div>
     );
 });
