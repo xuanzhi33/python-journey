@@ -142,8 +142,8 @@ ____________________
 ____________________
 ____________________
 ____________________
-_____LLOLL______F___
-SSSSSSSSSSSSSSSSSSSS
+____________________
+___S____S____S____F_
 DDDDDDDDDDDDDDDDDDDD
 BBBBBBBBBBBBBBBBBBBB
 `,
