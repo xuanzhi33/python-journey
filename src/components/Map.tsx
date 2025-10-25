@@ -142,14 +142,14 @@ const Map = forwardRef<MapRef, MapProps>(({ stop = 0, running = false }, ref) =>
     useImperativeHandle(ref, () => ({
         async moveLeft() {
             setPlayerPosition((pos) => {
-                if (!gameState[pos.y][pos.x - 1].passable) return pos;
+                if (!gameState[pos.y]?.[pos.x - 1]?.passable) return pos;
                 return { ...pos, x: pos.x - 1 };
             });
             await afterMove();
         },
         async moveRight() {
             setPlayerPosition((pos) => {
-                if (!gameState[pos.y][pos.x + 1].passable) return pos;
+                if (!gameState[pos.y]?.[pos.x + 1]?.passable) return pos;
                 return { ...pos, x: pos.x + 1 };
             });
             await afterMove();

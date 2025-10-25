@@ -6,7 +6,7 @@ import { ArrowLeft, ArrowRight, Play, RefreshCw, TriangleAlert } from 'lucide-re
 import { initPython } from './lib/python';
 import { Spinner } from './components/ui/spinner';
 import { toast, Toaster } from 'sonner';
-import Info from './components/Info';
+import Info, { textList } from './components/Info';
 import Map, { type MapRef } from './components/Map';
 import { sleep } from './lib/utils';
 
@@ -162,8 +162,10 @@ export default function App() {
             </div>
             <div className='flex items-center'>
 
-              <Button className='mr-2' variant="secondary" disabled={progress <= 0} onClick={() => {
+              <Button className='mr-2' variant="secondary" disabled={progress <= 0} onClick={async () => {
                 setProgress((prev) => Math.max(0, prev - 1));
+                await sleep(100);
+                mapRef.current?.reset();
               }}>
                 <ArrowLeft />
                 Previous
@@ -171,8 +173,11 @@ export default function App() {
               <div>
                 Stop {progress}
               </div>
-              <Button className='ml-2' variant="secondary" disabled={progress >= 10} onClick={() => {
-                setProgress((prev) => Math.min(10, prev + 1));
+              <Button className='ml-2' variant="secondary" disabled={progress >= textList.length - 1} onClick={async () => {
+                setProgress((prev) => Math.min(textList.length - 1, prev + 1));
+                await sleep(100);
+                mapRef.current?.reset();
+
               }}>
                 Next
                 <ArrowRight />
@@ -216,7 +221,7 @@ export default function App() {
             <div className='flex-1 overflow-y-scroll p-3'>
               <Info stop={progress} />
             </div>
-            <div className='flex-1 flex justify-center items-center'>
+            <div className='flex-1 flex justify-center items-center overflow-auto'>
               <Map stop={progress} ref={mapRef} running={status === "running"} />
             </div>
           </div>
