@@ -208,7 +208,10 @@ const Map = forwardRef<MapRef, MapProps>(({ stop = 0, running = false }, ref) =>
             await afterMove();
         },
         async jump() {
-            setPlayerPosition((pos) => ({ ...pos, y: pos.y - 1 }));
+            setPlayerPosition((pos) => {
+                if (!gameStateRef.current[pos.y - 1]?.[pos.x]?.passable) return pos;
+                return { ...pos, y: pos.y - 1 };
+            });
         },
         async reset() {
             setPlayerPosition(currentMapRef.current.start);
