@@ -1,3 +1,4 @@
+import type { GridItem } from "@/components/Map"
 import text0 from "../data/0.md?raw"
 import text1 from "../data/1.md?raw"
 import text2 from "../data/2.md?raw"
@@ -17,7 +18,10 @@ DDDDDDDDDDDDDDDDDDDD
 BBBBBBBBBBBBBBBBBBBB
 `,
         start: { x: 8, y: 5 },
-        goal: { x: 10, y: 4 },
+        // goal: { x: 10, y: 4 },
+        goal(pos: { x: number; y: number }, gameState: GridItem[][]) {
+            return pos.x === 10 && pos.y === 4;
+        },
         info: text0
     },
     {
@@ -34,7 +38,10 @@ DDDDDDDDDDDDDDDDDDDD
 BBBBBBBBBBBBBBBBBBBB
 `,
         start: { x: 0, y: 5 },
-        goal: { x: 19, y: 5 },
+        // goal: { x: 19, y: 5 },
+        goal(pos: { x: number; y: number }, _: GridItem[][]) {
+            return pos.x === 19 && pos.y === 5;
+        },
         info: text1
     },
     {
@@ -53,7 +60,10 @@ BBBBBBBBBBBBBBBBBBBB
 
 `,
         start: { x: 0, y: 5 },
-        goal: { x: 19, y: 5 },
+        // goal: { x: 19, y: 5 },
+        goal(pos: { x: number; y: number }, _: GridItem[][]) {
+            return pos.x === 19 && pos.y === 5;
+        },
         info: text2
     },
     {
@@ -71,7 +81,10 @@ DDDDDDDDDDDDDDDDDDDD
 BBBBBBBBBBBBBBBBBBBB
 `,
         start: { x: 0, y: 7 },
-        goal: { x: 19, y: 1 },
+        // goal: { x: 19, y: 1 },
+        goal(pos: { x: number; y: number }, _: GridItem[][]) {
+            return pos.x === 19 && pos.y === 1;
+        },
         info: text3
     },
 ]

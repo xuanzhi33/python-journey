@@ -142,7 +142,7 @@ const Map = forwardRef<MapRef, MapProps>(({ stop = 0, running = false }, ref) =>
 
         setPlayerPosition((pos) => {
             const goal = currentMapRef.current.goal;
-            if (pos.x === goal.x && pos.y === goal.y) {
+            if (goal(pos, gameStateRef.current)) {
                 toast.success("🎉 Congratulations!", {
                     description:
                         'You reached the goal! Now click the "Next" button in the top right corner to move on to the next stop!',
@@ -202,7 +202,6 @@ const Map = forwardRef<MapRef, MapProps>(({ stop = 0, running = false }, ref) =>
                 else if (direction === "right") targetX += 1;
                 
                 const targetTile = newState[targetY]?.[targetX];
-                console.log(targetTile, "mined");
                 
                 if (targetTile && targetTile.destructible) {
                     newState[targetY][targetX] = tileTypes["_"];
