@@ -6,6 +6,7 @@ import { ArrowLeft, ArrowRight, Play, TriangleAlert } from 'lucide-react';
 import { initPython } from './lib/python';
 import { Spinner } from './components/ui/spinner';
 import { toast, Toaster } from 'sonner';
+import Info from './components/Info';
 
 
 
@@ -151,7 +152,7 @@ export default function App() {
   return (
     <>
       <div className='h-dvh flex'>
-        <div className='w-1/2'>
+        <div className='w-1/2 flex flex-col'>
           <div className='flex px-2 py-1 justify-between items-center'>
 
             <div className='text-2xl'>
@@ -175,6 +176,9 @@ export default function App() {
                 <ArrowRight />
               </Button>
             </div>
+          </div>
+          <div>
+            <Info stop={progress} />
           </div>
         </div>
         <div
