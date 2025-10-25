@@ -17,7 +17,7 @@ export const tileTypes: Record<string, GridItem> = {
     G: {
         name: "Grass Block",
         imagePath: "/img/G.png",
-        destructible: false,
+        destructible: true,
         passable: false
     },
     F: {
@@ -187,7 +187,6 @@ const Map = forwardRef<MapRef, MapProps>(({ stop = 0, running = false }, ref) =>
             setPlayerPosition((pos) => ({ ...pos, y: pos.y - 1 }));
         },
         async reset() {
-            console.log("stop", stopRef.current);
             setPlayerPosition(currentMapRef.current.start);
             setGameState(parseMap(initialStateRef.current));
         },
@@ -203,6 +202,8 @@ const Map = forwardRef<MapRef, MapProps>(({ stop = 0, running = false }, ref) =>
                 else if (direction === "right") targetX += 1;
                 
                 const targetTile = newState[targetY]?.[targetX];
+                console.log(targetTile, "mined");
+                
                 if (targetTile && targetTile.destructible) {
                     newState[targetY][targetX] = tileTypes["_"];
                 }
