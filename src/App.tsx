@@ -1,13 +1,24 @@
-import { useState, type ComponentProps } from 'react';
+import { useEffect, useRef, useState, type ComponentProps } from 'react';
 import pythonKeywords from './assets/pythonKeywords';
-import Editor from '@monaco-editor/react';
+import Editor, { useMonaco } from '@monaco-editor/react';
+import { Button } from './components/ui/button';
+import { ArrowLeft, ArrowRight, Play, TriangleAlert } from 'lucide-react';
+import { initPython } from './lib/python';
+import { Spinner } from './components/ui/spinner';
+import { toast, Toaster } from 'sonner';
+
+
+
 
 export default function App() {
   const [value, setValue] = useState("123");
+  const [output, setOutput] = useState("Welcome to the Python Journey!");
+  const [status, setStatus] = useState("loading");
+  const [progress, setProgress] = useState(0);
+  const editorRef = useRef<Parameters<NonNullable<ComponentProps<typeof Editor>['onMount']>>[0] | null>(null);
   const onMount: ComponentProps<typeof Editor>['onMount'] = (editor, monaco) => {
     console.log('editor mounted', editor);
-
-
+    editorRef.current = editor;
 
     monaco.languages.registerCompletionItemProvider("python", {
       provideCompletionItems: (model, position) => {
@@ -68,26 +79,171 @@ export default function App() {
     });
 
   }
+  const outputScrollToBottomRef = useRef<() => void | null>(null);
+  const pythonRef = useRef<ReturnType<typeof initPython> extends Promise<infer R> ? R : null>(null);
+  const monacoApi = useMonaco();
+
+  const appendOutput = (text: string) => {
+    setOutput((prev) => {
+      const newOutput = prev + "\n" + text;
+      setTimeout(() => {
+        outputScrollToBottomRef.current?.();
+      }, 100);
+      return newOutput;
+    });
+  }
+
+  const runPythonCode = async () => {
+    if (pythonRef.current) {
+      pythonRef.current.clearContext();
+      try {
+        setStatus("running");
+
+        await pythonRef.current.run(value);
+
+        setStatus("idle");
+      } catch (error) {
+        appendOutput(`${error}`);
+        toast.error("Python Error", {
+          description: "Please check the error details in the Output located at the bottom right.",
+          action: { label: "Dismiss", onClick: () => { } }
+        });
+        setStatus("error");
+      }
+    }
+  }
+
+  async function realtimeSyntaxCheck(code: string) {
+    const editor = editorRef.current;
+    if (!editor || !monacoApi) return;
+    const model = editor.getModel();
+    if (!model) return;
+
+    let markers = [];
+
+    const result = await pythonRef.current?.syntaxCheck(code);
+    if (!result.ok) {
+      markers.push({
+        severity: monacoApi.MarkerSeverity.Error,
+        message: result.message,
+        startLineNumber: result.lineno,
+        startColumn: result.offset,
+        endLineNumber: result.lineno,
+        endColumn: result.offset + 1
+      });
+      setStatus("error");
+    } else {
+      setStatus("idle");
+    }
+
+    monacoApi?.editor.setModelMarkers(model, "python", markers);
+
+  }
+
+  useEffect(() => {
+    async function initialize() {
+      pythonRef.current = await initPython(appendOutput);
+      setStatus("idle");
+    }
+    initialize();
+  }, []);
 
   return (
     <>
-    <div className='h-dvh flex'>
-      <div
-        className='h-full w-1/2'
-      >
-      <Editor
-        defaultLanguage="python"
-        theme='vs-dark'
-        value={value}
-        onMount={onMount}
-        onChange={(newValue) => setValue(newValue || "")}
-      />
+      <div className='h-dvh flex'>
+        <div className='w-1/2'>
+          <div className='flex px-2 py-1 justify-between items-center'>
 
+            <div className='text-2xl'>
+              A Python Journey
+            </div>
+            <div className='flex items-center'>
+
+              <Button className='mr-2' variant="secondary" disabled={progress <= 0} onClick={() => {
+                setProgress((prev) => Math.max(0, prev - 1));
+              }}>
+                <ArrowLeft />
+                Previous
+              </Button>
+              <div>
+                Stop {progress}
+              </div>
+              <Button className='ml-2' disabled={progress >= 10} onClick={() => {
+                setProgress((prev) => Math.min(10, prev + 1));
+              }}>
+                Next
+                <ArrowRight />
+              </Button>
+            </div>
+          </div>
+        </div>
+        <div
+          className='h-full w-1/2 bg-[#1e1e1e] flex flex-col'
+        >
+          <div className='px-4 py-2 flex items-center'>
+            <Button size="sm" className='text-green-500'
+              disabled={status === "running" || status === "loading"}
+              onClick={async () => {
+                await runPythonCode();
+              }}>
+              <Play />
+              Run
+            </Button>
+            <div className='ml-2'>
+              {
+                status === "error" ? (
+                  <TriangleAlert className='text-yellow-500' />
+                ) : status !== "idle" ? (
+                  <Spinner className='text-white' />
+                ) : null
+              }
+
+            </div>
+          </div>
+          <Editor
+            defaultLanguage="python"
+            loading={
+              <Spinner className='text-white size-8' />
+            }
+            theme='vs-dark'
+            value={value}
+            onMount={onMount}
+            onChange={async (newValue) => {
+              const code = newValue || "";
+              setValue(code);
+              await realtimeSyntaxCheck(code);
+            }}
+          />
+          <Editor
+            options={
+              {
+                readOnly: true,
+                lineNumbers: "off",
+                minimap: { enabled: false }
+              }
+            }
+            height="200px"
+            theme='vs-dark'
+            loading={
+              <Spinner className='text-white size-8' />
+            }
+            onMount={(editor) => {
+              outputScrollToBottomRef.current = () => {
+                const model = editor.getModel();
+                if (model) {
+                  const lastLine = model.getLineCount();
+                  editor.revealLine(lastLine);
+                }
+              }
+            }}
+            value={output}
+          />
+
+        </div>
+
+
+        <Toaster />
       </div>
-      <div className='flex-1'>
-        123
-      </div>
-    </div>
     </>
   );
 }

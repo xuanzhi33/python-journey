@@ -123,3 +123,30 @@
 body {
   font-family: serif;
 }
+
+
+.steve {
+  width: 24px;              /* 单帧宽度 */
+  height: 24px;             /* 单帧高度 */
+  background: url(/img/steve.png) left center;
+  background-repeat: no-repeat;
+
+
+}
+
+.steve.playing {
+  animation: play 1s steps(4) infinite; 
+}
+.steve.idle {
+  background-position: -24px -48px;
+}
+
+@keyframes play {
+  from {
+    background-position: -24px -96px;
+  }
+  to {
+    background-position: -120px -96px; 
+    
+  }
+}
