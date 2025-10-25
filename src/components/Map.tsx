@@ -16,74 +16,74 @@ export interface GridItem {
 export const tileTypes: Record<string, GridItem> = {
     G: {
         name: "Grass Block",
-        imagePath: "/img/G.png",
+        imagePath: "./img/G.png",
         destructible: true,
         passable: false
     },
     F: {
         name: "Flower",
-        imagePath: "/img/F.png",
+        imagePath: "./img/F.png",
         destructible: true,
         passable: true,
         backgroundColor: "#dbfefe"
     },
     D: {
         name: "Dirt",
-        imagePath: "/img/D.png",
+        imagePath: "./img/D.png",
         destructible: true,
         passable: false
     },
     O: {
         name: "Oak Log",
-        imagePath: "/img/O.png",
+        imagePath: "./img/O.png",
         destructible: true,
         passable: false
     },
     L: {
         name: "Leaves",
-        imagePath: "/img/L.png",
+        imagePath: "./img/L.png",
         destructible: true,
         passable: true
     },
     B: {
         name: "Bedrock",
-        imagePath: "/img/B.png",
+        imagePath: "./img/B.png",
         destructible: false,
         passable: false
     },
     S: {
         name: "Stone",
-        imagePath: "/img/S.png",
+        imagePath: "./img/S.png",
         destructible: true,
         passable: false
     },
     d: {
         name: "Diamond Ore",
-        imagePath: "/img/DO.png",
+        imagePath: "./img/DO.png",
         destructible: true,
         passable: false,
     },
     g: {
         name: "Gold Ore",
-        imagePath: "/img/GO.png",
+        imagePath: "./img/GO.png",
         destructible: true,
         passable: false,
     },
     c: {
         name: "Coal Ore",
-        imagePath: "/img/CO.png",
+        imagePath: "./img/CO.png",
         destructible: true,
         passable: false,
     },
     i: {
         name: "Iron Ore",
-        imagePath: "/img/IO.png",
+        imagePath: "./img/IO.png",
         destructible: true,
         passable: false,
     },
     "_": {
         name: "Air",
-        imagePath: "/img/A.png",
+        imagePath: "./img/A.png",
         destructible: false,
         passable: true
     }
