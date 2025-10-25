@@ -109,5 +109,23 @@ export default [
     kind: "Function",
     detail: "File operation",
     documentation: "Opens a file and returns a file object.\n\nExample:\n```python\nwith open('file.txt') as f:\n    data = f.read()\n```"
+  },
+  {
+    label: "move_left",
+    kind: "Function",
+    detail: "Move character left",
+    documentation: "Moves the character one step to the left.\n\nExample:\n```python\nmove_left()\n```"
+  },
+  {
+    label: "move_right",
+    kind: "Function",
+    detail: "Move character right",
+    documentation: "Moves the character one step to the right.\n\nExample:\n```python\nmove_right()\n```"
+  },
+  {
+    label: "jump",
+    kind: "Function",
+    detail: "Make character jump",
+    documentation: "Makes the character jump upward.\n\nExample:\n```python\njump()\n```"
   }
 ];

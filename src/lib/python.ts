@@ -1,3 +1,5 @@
+import type { MapRef } from "@/components/Map";
+
 declare global {
     interface Window {
         loadPyodide: (options?: { indexURL?: string }) => Promise<PyodideInterface>;
@@ -29,7 +31,7 @@ export interface PyProxy {
 }
 
 
-export const initPython = async (appendOutput: (text: string) => void) => {
+export const initPython = async (appendOutput: (text: string) => void, mapRef: MapRef) => {
     let pyodide = await window.loadPyodide();
     let context: PyProxy = pyodide.globals;
     function clearContext() {
@@ -39,9 +41,34 @@ export const initPython = async (appendOutput: (text: string) => void) => {
             },
             input: (msg: string) => {
                 return prompt(msg);
+            },
+            __move_left: async () => {
+                await mapRef.moveLeft();
+            },
+            __move_right: async () => {
+                await mapRef.moveRight();
+            },
+            __jump: async () => {
+                await mapRef.jump();
             }
         });
+            const predefinedFunctions = `
+from time import sleep as __sleep
+def move_left():
+    __move_left()
+    __sleep(0.5)
+
+def move_right():
+    __move_right()
+    __sleep(0.5)
+
+def jump():
+    __jump()
+    __sleep(0.5)
+`;
+        pyodide.runPython(predefinedFunctions, { globals: context });
     }
+
     clearContext();
     async function run(code: string) {
         try {

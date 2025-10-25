@@ -7,12 +7,13 @@ import { initPython } from './lib/python';
 import { Spinner } from './components/ui/spinner';
 import { toast, Toaster } from 'sonner';
 import Info from './components/Info';
-
+import Map, { type MapRef } from './components/Map';
+import { sleep } from './lib/utils';
 
 
 
 export default function App() {
-  const [value, setValue] = useState("123");
+  const [value, setValue] = useState("");
   const [output, setOutput] = useState("Welcome to the Python Journey!");
   const [status, setStatus] = useState("loading");
   const [progress, setProgress] = useState(0);
@@ -70,7 +71,7 @@ export default function App() {
             kind: kindMap[item.kind],
             detail: item.detail,
             documentation: item.documentation,
-            insertText: item.label,
+            insertText: item.kind === "Function" ? `${item.label}()` : item.label,
             range: range
           };
         });
@@ -83,6 +84,7 @@ export default function App() {
   const outputScrollToBottomRef = useRef<() => void | null>(null);
   const pythonRef = useRef<ReturnType<typeof initPython> extends Promise<infer R> ? R : null>(null);
   const monacoApi = useMonaco();
+  const mapRef = useRef<MapRef | null>(null);
 
   const appendOutput = (text: string) => {
     setOutput((prev) => {
@@ -143,7 +145,7 @@ export default function App() {
 
   useEffect(() => {
     async function initialize() {
-      pythonRef.current = await initPython(appendOutput);
+      pythonRef.current = await initPython(appendOutput, mapRef.current!);
       setStatus("idle");
     }
     initialize();
@@ -153,7 +155,7 @@ export default function App() {
     <>
       <div className='h-dvh flex'>
         <div className='w-1/2 flex flex-col'>
-          <div className='flex px-2 py-1 justify-between items-center'>
+          <div className='flex px-4 py-2 justify-between items-center'>
 
             <div className='text-2xl'>
               A Python Journey
@@ -177,8 +179,11 @@ export default function App() {
               </Button>
             </div>
           </div>
-          <div>
+          <div className='flex-1 overflow-y-scroll p-3'>
             <Info stop={progress} />
+          </div>
+          <div className='flex-1 flex justify-center items-center'>
+            <Map stop={progress} ref={mapRef} running={status === "running"} />
           </div>
         </div>
         <div
@@ -188,6 +193,8 @@ export default function App() {
             <Button size="sm" className='text-green-500'
               disabled={status === "running" || status === "loading"}
               onClick={async () => {
+                await mapRef.current?.reset();
+                await sleep(500);
                 await runPythonCode();
               }}>
               <Play />

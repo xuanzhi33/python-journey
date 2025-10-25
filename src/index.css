@@ -130,8 +130,10 @@ body {
   height: 24px;             /* 单帧高度 */
   background: url(/img/steve.png) left center;
   background-repeat: no-repeat;
-
-
+  image-rendering: pixelated; /* 像素化渲染 */
+  transform-origin: top left;
+  transform: scale(1.4);
+  transition: top 0.5s, left 0.5s;
 }
 
 .steve.playing {
