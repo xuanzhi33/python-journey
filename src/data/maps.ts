@@ -8,6 +8,7 @@ import text5 from "../data/5.md?raw"
 import text6 from "../data/6.md?raw"
 import text7 from "../data/7.md?raw"
 import text8 from "../data/8.md?raw"
+import text9 from "../data/9.md?raw"
 export default [
     {
         map: `
@@ -220,7 +221,7 @@ BBBBBBBBBBBBBBBBBBBB
         goal(_: { x: number; y: number }, __: GridItem[][]) {
             return false;
         },
-        info: text8
+        info: text9
     }
 
 ]
