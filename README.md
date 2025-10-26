@@ -2,6 +2,17 @@
 
 A Python Journey - an interactive adventure for beginners that turns learning Python basics into playful coding quests.
 
+## Try it online
+
+[Click here](https://gh.xuanzhi33.cn/python-journey/)
+
+## Run locally
+
+```
+pnpm install
+pnpm dev
+```
+
 ## Credits
 
 - Steve Character is drawn by `Tarkan809`
