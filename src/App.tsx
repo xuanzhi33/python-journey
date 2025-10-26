@@ -2,7 +2,7 @@ import { useEffect, useRef, useState, type ComponentProps } from 'react';
 import pythonKeywords from './assets/pythonKeywords';
 import Editor, { useMonaco } from '@monaco-editor/react';
 import { Button } from './components/ui/button';
-import { ArrowLeft, ArrowRight, Play, RefreshCw, TriangleAlert } from 'lucide-react';
+import { ArrowLeft, ArrowRight, CodeXml, Play, RefreshCw, TriangleAlert } from 'lucide-react';
 import { initPython } from './lib/python';
 import { Spinner } from './components/ui/spinner';
 import { toast, Toaster } from 'sonner';
@@ -208,6 +208,13 @@ export default function App() {
               A Python Journey
               <span className='text-sm text-gray-500 ml-2'>
                 by xuanzhi33
+                <Button variant="link" size="sm" className='ml-3 text-gray-500' onClick={() => {
+                  window.open("https://github.com/xuanzhi33/python-journey");
+                }}>
+
+                <CodeXml />
+                  Source Code
+                </Button>
               </span>
             </div>
             <div className='flex items-center'>
