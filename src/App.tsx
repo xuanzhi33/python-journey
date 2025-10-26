@@ -13,10 +13,15 @@ import { sleep } from './lib/utils';
 
 
 export default function App() {
-  const [value, setValue] = useState("");
+  const [value, setValue] = useState(localStorage.getItem("pyjourney_code") || "");
   const [output, setOutput] = useState("Welcome to the Python Journey!");
   const [status, setStatus] = useState("loading");
-  const [progress, setProgress] = useState(0);
+  const [progress, setProgress] = useState(localStorage.getItem("pyjourney_progress") ? parseInt(localStorage.getItem("pyjourney_progress")!) : 0);
+
+  useEffect(() => {
+    localStorage.setItem("pyjourney_progress", progress.toString());
+  }, [progress]);
+  
   const editorRef = useRef<Parameters<NonNullable<ComponentProps<typeof Editor>['onMount']>>[0] | null>(null);
   const highlightCollectionRef = useRef<any>(null);
   const onMount: ComponentProps<typeof Editor>['onMount'] = (editor, monaco) => {
@@ -289,6 +294,8 @@ export default function App() {
                 editorDebounceRef.current = setTimeout(async () => {
                   await realtimeSyntaxCheck(code);
                   highlightLine(-1);
+
+                  localStorage.setItem("pyjourney_code", code);
                 }, 300);
 
               }}
